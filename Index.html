@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html> 
+  <head>
+    <title>Processing.JS inside Webpages: Template</title> 
+  </head>
+  <body>
+	<!--This draws the canvas on the webpage -->
+    <canvas id="mycanvas"></canvas> 
+  </body>
+ 
+  <!-- Include the processing.js library -->
+  <!-- See https://khanacademy.zendesk.com/hc/en-us/articles/202260404-What-parts-of-ProcessingJS-does-Khan-Academy-support- for differences -->
+  <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
+  <script>
+  var programCode = function(processingInstance) {
+    with (processingInstance) {
+      size(400, 400); 
+      frameRate(30);
+        
+      // Paste code from Khan Academy here:
+      angleMode = "radians";
+var interval = 500; // milliseconds
+var startTime = millis();
+var m = 0;
+var i = 0;
+var a = 1;
+var bullets = [];
+var BulletsSpeed = 2;
+var n = 1;
+var now = 0;
+var newInd = 0;
+
+//frameRate(5);
+
+
+
+var Square = function(config) {
+    this.x = config.x || 0;
+    this.y = config.y || 0;
+    this.w = config.w || 20;
+    this.h = config.h || 20;
+    this.speed = config.speed || 1;
+    this.colorR = config.colorR || 0;
+    this.colorG = config.colorG || 0;
+    this.colorB = config.colorB || 0;
+};
+
+var square1 = new Square({speed: 4, x: 100, y: 100, colorG: 250});
+
+Square.prototype.draw = function() {
+    noStroke();
+    fill(this.colorR, this.colorG, this.colorB);
+    ellipse(this.x, this.y, this.w, this.h);
+};
+
+var keys = [];
+
+var keyPressed = function() { 
+  keys[keyCode] = true;
+};
+ 
+var keyReleased = function() { 
+  keys[keyCode] = false; 
+};
+
+Square.prototype.move = function() {
+
+    if (keyIsPressed && keys[RIGHT]) {
+            this.x += this.speed;
+    }
+    if (keyIsPressed && keys[LEFT]) {
+            this.x = this.x - this.speed;
+    }
+    if (keyIsPressed && keys[UP]) {
+            this.y = this.y - this.speed;
+    }
+    if (keyIsPressed && keys[DOWN]) {
+            this.y = this.y + this.speed;
+    }
+    
+    if (a > 1 && keyIsPressed && keys[82]) {
+            //i = 1;
+    }
+};
+
+var Bullet = function(x, y, gunx, guny) {
+    this.x = x;
+    this.y = y;
+    this.gunx = gunx;
+    this.guny = guny;
+};
+
+
+Bullet.prototype.draw = function() {
+    ellipse(this.x, this.y, 10,10);
+    
+};
+
+for (var i = 0; i < 1; i++) {
+    bullets.push(new Bullet(square1.x, square1.y, mouseX - square1.x, mouseY- square1.y));
+}
+
+var Button = function(config) {
+    this.bx = config.bx || 100;
+    this.by = config.by || 160;
+    this.bw = config.bw || 200;
+    this.bh = config.bh || 50;
+    this.bTextSize = config.bTextSize || 20;
+    this.bgcolorR = config.bgcolorR || 250;
+    this.bgcolorG = config.bgcolorG || 250;
+    this.bgcolorB = config.bgcolorB || 250;
+    this.bcolorR = config.bcolorR || 250;
+    this.bcolorG = config.bcolorG || 250;
+    this.bcolorB = config.bcolorB || 250;
+    this.blabel = config.blabel || "Button";
+    this.blabel1 = config.blabel1 || "Button";
+};
+
+var btn1 = new Button({bgcolorR: 250, bgcolorG:190, bgcolorB: 250, bcolorR: 10, bcolorG:250, bcolorB: 250, blabel: "The Square Game", blabel1: "Click to Play"}); 
+var btn2 = new Button({bx: 300, by: 1, bw: 100, bTextSize: 13, bgcolorR: 255, bgcolorG:190, bgcolorB: 200, bcolorR: 1, bcolorG:250, bcolorB: 1, blabel: "Cirlce Speed+1", blabel1: "Cost 30"});
+var btn3 = new Button({bx: 150, by: 1, bw: 100, bTextSize: 13, bgcolorR: 255, bgcolorG:190, bgcolorB: 200, bcolorR: 1, bcolorG:250, bcolorB: 1, blabel: "Bullet Speed+1", blabel1: "Cost 30"});
+var btn4 = new Button({bx: 1, by: 1, bw: 100, bTextSize: 13, bgcolorR: 255, bgcolorG:190, bgcolorB: 200, bcolorR: 1, bcolorG:250, bcolorB: 1, blabel: "Fire Rate+1", blabel1: "Cost 30"});
+
+Button.prototype.draw = function() {
+    fill(this.bcolorR, this.bcolorG, this.bcolorB);
+    rect(this.bx, this.by, this.bw, this.bh, 5);
+    fill(0, 0, 0);
+    textSize(this.bTextSize);
+    textAlign(LEFT, TOP);
+    text(this.blabel, this.bx+10, this.by+5);
+    textSize(this.bTextSize - 2);
+    text(this.blabel1, this.bx+45, this.by+25);
+};
+
+Button.prototype.drawBckgrn = function() {
+    background(this.bgcolorR, this.bgcolorG, this.bgcolorB);
+};
+
+
+    var isMouseInside = function(btn) {
+        return (mouseX >= btn.bx &&
+                mouseX <= (btn.bx+btn.bw) &&
+                mouseY >= btn.by &&
+                mouseY <= (btn.by+btn.bh)
+                );
+    };
+
+bullets.push(new Bullet(square1.x, square1.y, mouseX - square1.x, mouseY- square1.y));
+
+var drawStart = function() {
+    btn1.drawBckgrn();
+    btn1.draw();
+    
+    
+    //draw= function() {
+       
+        mousePressed = function(){if(isMouseInside(btn1)) {
+            draw= function() {
+                
+            background(255, 190, 200);
+            
+            var gunx1 = mouseX - square1.x;
+            var guny1 = mouseY - square1.y;
+            var gunr = sqrt(sq(gunx1) + sq(guny1));
+            var gunPointx = cos(acos(gunx1/gunr))*20;
+            var gunPointy = sin(asin(guny1/gunr))*20;
+            
+            btn2.draw();
+            btn3.draw();
+            btn4.draw();
+            
+            stroke(0,0,0);
+            line(square1.x, square1.y, gunPointx+square1.x, gunPointy+square1.y);
+            square1.draw();
+            square1.move();
+            
+            
+            
+        mousePressed = function() {
+            if (n === 0 && isMouseInside(btn2)) {
+            square1.speed += 1;
+            n = 1;
+            println(n);
+        }
+        };
+        
+        mousePressed = function(){
+        if (n === 0 && isMouseInside(btn3)) {
+            BulletsSpeed -= BulletsSpeed / 10;
+            n = 1;
+            println(BulletsSpeed);
+        }
+        };
+        
+        mousePressed = function(){
+        if (n === 0 && isMouseInside(btn4)) {
+            interval -= interval/10;
+            n = 1;
+        }
+        };
+        
+        textSize(20);
+        text(n, 100, 140);
+        text(interval, 100, 160);
+        text(bullets[a].x, 100, 100);
+        text(a, 100, 120);
+        
+        mousePressed = function(){
+            if (n === 0 && a < 30) {
+            a += 1;
+            bullets.push(new Bullet(square1.x, square1.y, mouseX - square1.x, mouseY- square1.y));
+            n = 1;
+            }
+        };
+        
+        if (n === 1) {
+            now = millis();
+        }
+        
+        if (now - startTime >= interval){
+        n = 0;
+        }
+        
+        if (n === 0) {
+        startTime = millis();   
+        }
+        
+           
+            for (var i = 0; i < bullets.length; i ++) {
+            bullets[i].draw();
+            
+            var BulletsSpeedX = round(cos(acos((bullets[a - i].gunx)/sqrt(sq(bullets[a - i].gunx) + sq(bullets[a - i].guny))))*10);
+            var BulletsSpeedY = round(sin(asin((bullets[a - i].guny)/sqrt(sq(bullets[a - i].gunx) + sq(bullets[a - i].guny))))*10);
+                
+                if(bullets[a - i].x < 400 && bullets[a - i].y < 400 && bullets[a - i].x > 0 && bullets[a - i].y > 0) { 
+                       
+                bullets[a - i].x += BulletsSpeedX/BulletsSpeed.toFixed(2);
+                bullets[a - i].y += BulletsSpeedY/BulletsSpeed.toFixed(2);
+            }
+                else{bullets[a - i].x = 500;}
+            
+}
+
+        //};
+    }
+};
+};
+};
+
+drawStart();
+
+    }};
+
+  // Get the canvas that ProcessingJS will use
+  var canvas = document.getElementById("mycanvas"); 
+  // Pass the function to ProcessingJS constructor
+  var processingInstance = new Processing(canvas, programCode); 
+  </script>
+</html>
